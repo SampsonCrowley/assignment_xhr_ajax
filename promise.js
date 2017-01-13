@@ -5,23 +5,7 @@ $.promise = (function(){
   cycle,
   timer = ((typeof setImmediate != "undefined") ? function timer(fn) { return setImmediate(fn); } : setTimeout);
 
-  try {
-    Object.defineProperty({},"x",{});
-    builtInProp = function builtInProp(obj,name,val,config) {
-      return Object.defineProperty(obj,name,{
-        value: val,
-        writable: true,
-        configurable: config !== false
-      });
-    };
-  }
-  catch (err) {
-    builtInProp = function builtInProp(obj,name,val) {
-      obj[name] = val;
-      return obj;
-    };
-  }
-
+  // linked list with an access point at cycle
   queue = (function Queue(){
     var first, last, item;
 
@@ -54,6 +38,7 @@ $.promise = (function(){
     }
   })()
 
+  // schedule to push items to the end of the stack
   function schedule (fn, self) {
     queue.add(fn, self);
     if(!cycle){
@@ -61,6 +46,7 @@ $.promise = (function(){
     }
   }
 
+  // allow then chaining if return object is also a function
   function isThenable(obj) {
     var _then, obj_type = typeof obj;
 
@@ -135,6 +121,7 @@ $.promise = (function(){
     }
   }
 
+  // run through a chain to check state
   function notifyChain() {
     for (var i=0; i<this.chain.length; i++) {
       notifySingle(this,
@@ -195,6 +182,8 @@ $.promise = (function(){
       this.promise = self;
       this.triggered = false;
     }
+
+    //set query chain initial values
     function MakePromise(self) {
       this.promise = self;
       this.state = 0;
@@ -208,17 +197,18 @@ $.promise = (function(){
         throw TypeError("Not a function");
       }
 
-      // instance shadowing the inherited "brand"
       // to signal an already "initialized" promise
       this.__promise__ = 1;
 
       var promise = new MakePromise(this);
 
+      //add then function as a property
       this["then"] = function then(success,failure) {
         var obj = {
           success: typeof success == "function" ? success : true,
           failure: typeof failure == "function" ? failure : false
         };
+
         // Note: `then(..)` itself can be borrowed to be used against
         // a different promise constructor for making the chained promise,
         // by substituting a different `this` binding.
@@ -243,6 +233,8 @@ $.promise = (function(){
       };
 
       try {
+
+        //try to execute the passed function
         executor.call(
           void 0,
           function publicResolve(msg){
@@ -254,6 +246,7 @@ $.promise = (function(){
         );
       }
       catch (err) {
+        // cath any errors attempting to run the callback
         reject.call(promise, err);
       }
     }
