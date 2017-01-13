@@ -1,22 +1,3 @@
-// var xhr = new XMLHttpRequest();
-// xhr.addEventListener('load', function() {
-//   console.log(this.responseText, this.status, this.statusText, this);
-// });
-// xhr.open('GET', 'https://reqres.in/api/users', true);
-// xhr.send();
-
-// var xhr = new XMLHttpRequest();
-// // xhr.addEventListener('load', function() {
-// //   console.log(this.responseText, this.status, this.statusText, this);
-// // });
-// xhr.onreadystatechange = function() {
-//   if (this.readyState === 4) {
-//     console.log(this.responseText, this.status, this.statusText, this);
-//   }
-// };
-// xhr.open('POST', 'https://reqres.in/api/users', true);
-// xhr.send('asdf');
-
 var $ = $ || {};
 
 $.ajax = (function() {
