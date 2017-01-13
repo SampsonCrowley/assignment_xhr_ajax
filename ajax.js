@@ -60,7 +60,7 @@ $.ajax = (function() {
   };
 
   var success = function(xhr) {
-    callbacks.success(xhr.data, xhr.statusText, xhr);
+    callbacks.success(xhr.responseText, xhr.status, xhr);
   };
 
   var setData = function(obj) {
@@ -160,4 +160,10 @@ $.ajax = (function() {
   return init;
 })();
 
-console.log($.ajax('https://reqres.in/api/users'));
+
+ $.ajax('https://reqres.in/api/users',
+  {
+    success: function(a, b, c) {
+      console.log(a, b, c);
+    }
+  });
